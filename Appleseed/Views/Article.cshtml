@@ -1,0 +1,13 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Appleseed.Code.Models.BaseViewModel>
+@{
+    if (Model.IsAjaxRequest)
+    {
+        Layout = null;   
+    }
+    else
+    { 
+        Layout = "Master.cshtml";
+    }    
+}
+
+@Html.GetGridHtml(Model.CurrentPage, "mainContent", "Appleseed")

@@ -1,0 +1,99 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<Appleseed.Code.Models.StartViewModel>
+@{
+    Layout = "Master.cshtml";
+}
+
+@section Header
+{
+    <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.8/mapbox.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.8/mapbox.css' rel='stylesheet' />
+}
+
+<div class="start-page">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-1">
+                <ul>
+                    @foreach (var item in Model.Menu)
+                    {
+                        <li>
+                            <a href="@Umbraco.NiceUrl(item.Id)">@item.Name</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div id="mapContainer" class="col-md-11">
+
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+@section Footer
+{
+    <script>
+        L.mapbox.accessToken = 'pk.eyJ1Ijoic3dlZGV5ZWQiLCJhIjoia3pGR1hWOCJ9.C_3Hb8ksRJhgR1QMXu8oaQ';
+
+        var southWest = L.latLng(31.412256264474262, -109.05029296875);
+        var northEast = L.latLng(34.35250666867596, -105.5950927734375);
+        var bounds = L.latLngBounds(southWest, northEast);
+
+        //var map = L.mapbox.map('mapContainer', 'swedeyed.lpln2m79')
+        //    .setView([32.127942397192314, -106.24191284179688], 9);
+
+        var map = L.mapbox.map('mapContainer', 'swedeyed.lpln2m79', {
+            // set that bounding box as maxBounds to restrict moving the map
+            // see full maxBounds documentation:
+            // http://leafletjs.com/reference.html#map-maxbounds
+            maxBounds: bounds,
+            maxZoom: 15,
+            minZoom: 9
+        });
+
+        // As with any other AJAX request, this technique is subject to the Same Origin Policy:
+        // http://en.wikipedia.org/wiki/Same_origin_policy
+        // So the CSV file must be on the same domain as the Javascript, or the server
+        // delivering it should support CORS.
+        var featureLayer = L.mapbox.featureLayer()
+            .loadURL('/umbraco/api/geo/allmarkers')
+            .addTo(map);
+
+        // Set a custom icon on each marker based on feature properties.
+        featureLayer.on('layeradd', function (e) {
+            var marker = e.layer,
+                feature = marker.feature;
+
+            marker.setIcon(L.icon(feature.properties.icon));
+        });
+
+        featureLayer.on('mouseover', function (e) {
+            e.layer.openPopup();
+        });
+
+        featureLayer.on('mouseout', function (e) {
+            e.layer.closePopup();
+        });
+
+        featureLayer.on("click", function (e) {
+            e.layer.closePopup();
+            var feature = e.layer.feature;
+            
+            $.fancybox({
+                autoSize : false,
+                width    : "80%",
+                height   : "90%",
+                autoSize: false,
+                maxWidth: 1000,
+                href: feature.properties.url,
+                type: 'ajax',
+                iframe: {
+                    scrolling: 'auto',
+                    preload: true
+                }
+            });
+
+            return false;
+        })
+    </script>
+}
