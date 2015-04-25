@@ -51,6 +51,12 @@
             </div>
         </div>
     </div>
+    <div id="popup-contents" class="container-fluid white-popup mfp-hide zoom-anim-dialog">
+        <div class="row">
+            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+        </div>
+    </div>
+
     <!-- Javascripts -->
     <script src="/js/vendor/jquery.min.js"></script>
     <script src="/js/vendor/bootstrap.min.js"></script>
@@ -61,20 +67,30 @@
         $(document).ready(function () {
 
             $('a').click(function () {
+                $.get('/poi/general/military-base', function (data) {
 
-                $.magnificPopup.open({
-                    items: {
-                        src: '/poi/general/military-base'
-                    },
-                    type: 'iframe',
-                    alignTop: true,
-                    overflowY: 'scroll',
-                    closeBtnInside: true
+                    $('#popup-contents').html(data);
+
+                    $.magnificPopup.open({
+                        items: {
+                            src: '#popup-contents'
+                        },
+                        type: 'inline',
+                        fixedContentPos: false,
+                        fixedBgPos: true,
+                        overflowY: 'auto',
+                        closeBtnInside: true,
+                        preloader: false,
+                        midClick: true,
+                        removalDelay: 300,
+                        mainClass: 'my-mfp-zoom-in'
+                    });
                 });
-
-                return false;
             });
+
+            return false;
         });
+
     </script>
 </body>
 </html>

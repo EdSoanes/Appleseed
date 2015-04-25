@@ -7,6 +7,8 @@
 {
     <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.8/mapbox.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.8/mapbox.css' rel='stylesheet' />
+    <link rel="stylesheet" type="text/css" href="/js/vendor/magnific/magnific-popup.css">
+
 }
 
 <div class="start-page">
@@ -27,11 +29,14 @@
             </div>
         </div>
     </div>
-    
+</div>
+
+<div id="popup-contents" class="container-fluid white-popup mfp-hide zoom-anim-dialog">
 </div>
 
 @section Footer
 {
+    <script src="/js/vendor/magnific/jquery.magnific-popup.js"></script>
     <script>
         L.mapbox.accessToken = 'pk.eyJ1Ijoic3dlZGV5ZWQiLCJhIjoia3pGR1hWOCJ9.C_3Hb8ksRJhgR1QMXu8oaQ';
 
@@ -78,22 +83,69 @@
         featureLayer.on("click", function (e) {
             e.layer.closePopup();
             var feature = e.layer.feature;
-            
-            $.fancybox({
-                autoSize : false,
-                width    : "80%",
-                height   : "90%",
-                autoSize: false,
-                maxWidth: 1000,
-                href: feature.properties.url,
-                type: 'ajax',
-                iframe: {
-                    scrolling: 'auto',
-                    preload: true
-                }
+
+            $.get(feature.properties.url, function (data) {
+
+                $('#popup-contents').html(data);
+
+                $.magnificPopup.open({
+                    items: {
+                        src: '#popup-contents'
+                    },
+                    type: 'inline',
+                    fixedContentPos: false,
+                    fixedBgPos: true,
+                    overflowY: 'auto',
+                    closeBtnInside: true,
+                    preloader: false,
+                    midClick: true,
+                    removalDelay: 300,
+                    mainClass: 'my-mfp-zoom-in'
+                });
             });
 
+            //$.fancybox({
+            //    autoSize: false,
+            //    width: "80%",
+            //    height: "90%",
+            //    autoSize: false,
+            //    maxWidth: 1000,
+            //    href: feature.properties.url,
+            //    type: 'ajax',
+            //    iframe: {
+            //        scrolling: 'auto',
+            //        preload: true
+            //    }
+            //});
+
             return false;
-        })
+        });
+
+        //$(document).ready(function () {
+
+        //    $('a').click(function () {
+        //        $.get('/poi/general/military-base', function (data) {
+
+        //            $('#popup-contents').html(data);
+
+        //            $.magnificPopup.open({
+        //                items: {
+        //                    src: '#popup-contents'
+        //                },
+        //                type: 'inline',
+        //                fixedContentPos: false,
+        //                fixedBgPos: true,
+        //                overflowY: 'auto',
+        //                closeBtnInside: true,
+        //                preloader: false,
+        //                midClick: true,
+        //                removalDelay: 300,
+        //                mainClass: 'my-mfp-zoom-in'
+        //            });
+        //        });
+        //    });
+
+        //    return false;
+        //});
     </script>
 }
